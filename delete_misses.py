@@ -75,7 +75,7 @@ if __name__ == '__main__':
 		else:
 			break
 	
-	print('normal distribution:')
+	print(f'{theor_dist} distribution:')
 	os.system(f'python plot_histogram.py {new_file_name} {theor_dist}')
 	
 	print('#############################################')
@@ -103,6 +103,11 @@ if __name__ == '__main__':
 		suffix = '.norm'
 		os.system(f'python data_normalization.py {new_file_name} {suffix}')
 		print('done')
+		
+	k = ((data - data.mean())**4).sum() / (data.shape[-1] * data.std()**4)
+	
+	print('#############################################')
+	print(f'k = {k}')
 	
 	
 	
