@@ -33,6 +33,7 @@ if __name__ == '__main__':
 	parser.add_argument('--file_name', type=str)
 	parser.add_argument('--use_dip_test', dest='use_dip_test', action='store_true')
 	parser.add_argument('--norm_data', dest='norm_data', action='store_true')
+	parser.add_argument('--norm_type', choices=['affine', 'to_std_normal'], default='affine')
 	parser.set_defaults(use_dip_test=False)
 	parser.set_defaults(norm_data=False)
 
@@ -121,7 +122,7 @@ if __name__ == '__main__':
 		print('#############################################')
 		print('normalize data:')
 		suffix = '.norm'
-		os.system(f'python data_normalization.py {new_file_name} {suffix}')
+		os.system(f'python data_normalization.py --file_name {new_file_name} --suffix {suffix} --norm_type {args.norm_type}')
 		print('done')
 		
 	k = ((data - data.mean())**4).sum() / (data.shape[-1] * data.std()**4)
