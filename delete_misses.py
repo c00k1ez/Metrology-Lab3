@@ -9,6 +9,24 @@ from unidip.dip import diptst
 
 import os
 
+def delete_misses(data):
+	while True:
+		mean = data.mean()
+		std = data.std()
+		std_3 = std * 3
+		min_border = mean - std_3
+		max_border = mean + std_3
+		distances = data - mean
+		min_ind = distances.argmin()
+		max_ind = distances.argmax()
+		min_val, max_val = data[min_ind], data[max_ind]
+		if min_val < min_border:
+			data = data[data != min_val]
+		elif max_val > max_border:
+			data = data[data != max_val]
+		else:
+			return data
+		
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -31,6 +49,25 @@ if __name__ == '__main__':
 		data = np.array(list(map(float, data)))
 	print(f'num samples: {data.shape[-1]}')
 	
+	print('#############################################')
+	sns.histplot(data)
+	plt.grid(True)
+	plt.show()
+	
+	theor_dist = ''
+	print('Write theoretical distribution ["normal", "Cauchy", "uniform"]:')
+	while True:
+		theor_dist = input()
+		if theor_dist not in ["normal", "Cauchy", "uniform"]:
+			print('Error! Possible choices: ["normal", "Cauchy", "uniform"]')
+		else:
+			break
+	
+	print(f'Hypothesis: {theor_dist} dist')
+	print('Using 3*std rule')
+	
+	data = delete_misses(data)
+	
 	mean = np.mean(data)
 	std = np.std(data)
 	std_3 = 3 * std
@@ -41,16 +78,7 @@ if __name__ == '__main__':
 	print(f'mean: {mean}\nstd: {std}')
 	print('#############################################')
 	print(f'3*std: {std_3}\nmean - 3*std: {min_border}\nmean + 3*std: {max_border}')
-	print('#############################################')
-	sns.histplot(data)
-	plt.grid(True)
-	plt.show()
-	
-	print('Hypothesis: normal dist')
-	print('Using 3*std rule')
-	
-	data = data[data > min_border]
-	data = data[data < max_border]
+		
 	
 	print(f'num samples after deleting outliers: {data.shape[-1]}')
 	new_file_name = args.file_name + '.new'
@@ -66,14 +94,6 @@ if __name__ == '__main__':
 	
 	hist_step = (data.max() - data.min()) / hist_bins
 	
-	theor_dist = ''
-	print('Write theoretical distribution ["normal", "Cauchy", "uniform"]:')
-	while True:
-		theor_dist = input()
-		if theor_dist not in ["normal", "Cauchy", "uniform"]:
-			print('Error! Possible choices: ["normal", "Cauchy", "uniform"]')
-		else:
-			break
 	
 	print(f'{theor_dist} distribution:')
 	os.system(f'python plot_histogram.py {new_file_name} {theor_dist}')
