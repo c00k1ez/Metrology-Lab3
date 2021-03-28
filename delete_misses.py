@@ -133,5 +133,6 @@ if __name__ == '__main__':
 	print('#############################################')
 	print(f'k = {k}')
 	print('#############################################')
+	print("Poka hueta, na poslednuy strochky ne cmotret'")
 	print(f'std(data)/sqrt(n): {std/np.sqrt(data.shape[-1])}')
 	os.system(f'python table_values_of_two_tailed_student_distribution.py {hist_bins} {0.95}')
