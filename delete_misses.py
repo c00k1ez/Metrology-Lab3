@@ -1,0 +1,109 @@
+import numpy as np
+import argparse
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+import scipy.stats as stats
+import seaborn as sns
+
+from unidip.dip import diptst
+
+import os
+
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--file_name', type=str)
+	parser.add_argument('--use_dip_test', dest='use_dip_test', action='store_true')
+	parser.add_argument('--norm_data', dest='norm_data', action='store_true')
+	parser.set_defaults(use_dip_test=False)
+	parser.set_defaults(norm_data=False)
+
+	args = parser.parse_args()
+	
+	print('Parameters of original data:')
+	print('#############################################')
+	os.system(f'python calculate_sample_params.py {args.file_name}')
+	print('#############################################')
+
+	with open(args.file_name, 'r', encoding='utf-8') as f:
+		data = list(f.read().split('\n'))
+		data = [d for d in data if d != '']
+		data = np.array(list(map(float, data)))
+	print(f'num samples: {data.shape[-1]}')
+	
+	mean = np.mean(data)
+	std = np.std(data)
+	std_3 = 3 * std
+	
+	min_border = mean - std_3
+	max_border = mean + std_3
+	
+	print(f'mean: {mean}\nstd: {std}')
+	print('#############################################')
+	print(f'3*std: {std_3}\nmean - 3*std: {min_border}\nmean + 3*std: {max_border}')
+	print('#############################################')
+	sns.histplot(data)
+	plt.grid(True)
+	plt.show()
+	
+	print('Hypothesis: normal dist')
+	print('Using 3*std rule')
+	
+	data = data[data > min_border]
+	data = data[data < max_border]
+	
+	print(f'num samples after deleting outliers: {data.shape[-1]}')
+	new_file_name = args.file_name + '.new'
+	with open(new_file_name, 'w', encoding='utf-8') as f:
+		f.write('\n'.join(list(map(str, data.tolist()))))
+	print('New parameters:')
+	print('#############################################')
+	os.system(f'python calculate_sample_params.py {args.file_name + ".new"}')
+	print('#############################################')
+	
+	hist_bins = int(np.ceil(np.log2(data.shape[-1])) + 1)
+	print(f'number of hist bins: {hist_bins}')
+	
+	hist_step = (data.max() - data.min()) / hist_bins
+	
+	theor_dist = ''
+	print('Write theoretical distribution ["normal", "Cauchy", "uniform"]:')
+	while True:
+		theor_dist = input()
+		if theor_dist not in ["normal", "Cauchy", "uniform"]:
+			print('Error! Possible choices: ["normal", "Cauchy", "uniform"]')
+		else:
+			break
+	
+	print('normal distribution:')
+	os.system(f'python plot_histogram.py {new_file_name} {theor_dist}')
+	
+	print('#############################################')
+	print('chi-square for normal distribution')
+	print('chi-square min:')
+	os.system(f'python table_values_of_chi2.py {hist_bins} 0.95')
+	print('chi-square max:')
+	os.system(f'python  table_values_of_chi2.py {hist_bins} 0.05')
+	print('chi-square computed:')
+	os.system(f'python practical_chi2_calculate.py {new_file_name} {theor_dist}')
+	
+	if args.use_dip_test:
+		print('#############################################')
+		p_val = diptst(np.sort(data))[0]
+		print('Hypothesis: unimodal dist')
+		print(f'DIP test p-value: (sensitivity 0.05) {p_val}')
+		if p_val < 0.05:
+			print('Reject hypothesis. Alternative - bimodal')
+		else:
+			print('Hypothesis correct')
+	
+	if args.norm_data:
+		print('#############################################')
+		print('normalize data:')
+		suffix = '.norm'
+		os.system(f'python data_normalization.py {new_file_name} {suffix}')
+		print('done')
+	
+	
+	
+		
