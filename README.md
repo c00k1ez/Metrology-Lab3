@@ -46,7 +46,7 @@
 
 **Шаг четвертый**: для оставшихся двух файлов запустите команду:
 
-```python[3] delete_misses.py --file_name <путь_до_файла.txt> [--use_dip_test]```
+```python[3] delete_misses.py --file_name <путь_до_файла.txt> [--use_dip_test --bin_compute_type f1]```
 
 Если у вас в каком-то из файлов хи-квадрат попадает в диапазон, делайте пункры по лабе.
 
