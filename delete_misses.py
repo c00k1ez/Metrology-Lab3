@@ -5,6 +5,8 @@ import matplotlib.mlab as mlab
 import scipy.stats as stats
 import seaborn as sns
 
+import math
+
 from unidip.dip import diptst
 
 import os
@@ -35,6 +37,7 @@ if __name__ == '__main__':
 	parser.add_argument('--use_dip_test', dest='use_dip_test', action='store_true')
 	parser.add_argument('--norm_data', dest='norm_data', action='store_true')
 	parser.add_argument('--norm_type', choices=['affine', 'to_std_normal'], default='affine')
+	parser.add_argument('--bin_compute_type', choices=['f1', 'f2', 'f3'], default='f1')
 	parser.set_defaults(use_dip_test=False)
 	parser.set_defaults(norm_data=False)
 
@@ -93,7 +96,12 @@ if __name__ == '__main__':
 	os.system(f'python calculate_sample_params.py {args.file_name + ".new"}')
 	print('#############################################')
 	
-	hist_bins = int(np.ceil(np.log2(data.shape[-1])) + 1)
+	if args.bin_compute_type == 'f1':
+		hist_bins = int(np.ceil(np.log2(data.shape[-1])) + 1)
+	elif args.bin_compute_type == 'f2':
+		hist_bins = 5 * int(math.ceil(math.log10(data.shape[-1])))
+	else:
+		hist_bins = int(math.ceil(math.sqrt(data.shape[-1])))
 	print(f'number of hist bins: {hist_bins}')
 	
 	hist_step = (data.max() - data.min()) / hist_bins
@@ -133,6 +141,7 @@ if __name__ == '__main__':
 	print('#############################################')
 	print(f'k = {k}')
 	print('#############################################')
-	print("Poka hueta, na poslednuy strochky ne cmotret'")
+	
 	print(f'std(data)/sqrt(n): {std/np.sqrt(data.shape[-1])}')
+	print("Poka hueta, na poslednuy strochky ne cmotret'")
 	os.system(f'python table_values_of_two_tailed_student_distribution.py {hist_bins} {0.95}')
