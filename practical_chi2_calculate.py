@@ -18,6 +18,7 @@ def parse_args():
     parser.add_argument("distribution",
                         help='distribudion to use for calculations',
                         choices=['normal', 'Cauchy', 'uniform'])
+    parser.add_argument("bins", default=None, type=int)
     return parser.parse_args()
 
 ## Parsing and processing of command line arguments
@@ -37,7 +38,10 @@ else:
 
 ## Calculating a number of equal intervals for histogram,
 #  width of the interval and amount of measured values in each interval
-bins = int(np.sqrt(len(sample)))
+if args.bins is None:
+	bins = int(np.sqrt(len(sample)))
+else:
+	bins = int(args.bins)
 df = bins - 3
 bin_width = (max(sample) - min(sample)) / bins
 xh, yh, _ = pyplot.hist(sample, bins=bins, density=False, alpha=0.5)

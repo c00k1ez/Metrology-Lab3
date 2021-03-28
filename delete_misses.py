@@ -107,7 +107,7 @@ if __name__ == '__main__':
 	print('chi-square max:')
 	os.system(f'python  table_values_of_chi2.py {hist_bins} 0.05')
 	print('chi-square computed:')
-	os.system(f'python practical_chi2_calculate.py {new_file_name} {theor_dist}')
+	os.system(f'python practical_chi2_calculate.py {new_file_name} {theor_dist} {hist_bins}')
 	
 	if args.use_dip_test:
 		print('#############################################')
