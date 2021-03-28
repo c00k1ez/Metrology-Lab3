@@ -53,6 +53,8 @@ if __name__ == '__main__':
 	
 	print('#############################################')
 	sns.histplot(data)
+	plt.xlabel('Интервалы')
+	plt.ylabel('Число значений, входящих в интервал')
 	plt.grid(True)
 	plt.show()
 	
@@ -98,7 +100,7 @@ if __name__ == '__main__':
 	
 	
 	print(f'{theor_dist} distribution:')
-	os.system(f'python plot_histogram.py {new_file_name} {theor_dist}')
+	os.system(f'python plot_histogram.py {new_file_name} {theor_dist} {hist_bins}')
 	
 	print('#############################################')
 	print('chi-square for normal distribution')
@@ -130,7 +132,6 @@ if __name__ == '__main__':
 	
 	print('#############################################')
 	print(f'k = {k}')
-	
-	
-	
-		
+	print('#############################################')
+	print(f'std(data)/sqrt(n): {std/np.sqrt(data.shape[-1])}')
+	os.system(f'python table_values_of_two_tailed_student_distribution.py {hist_bins} {0.95}')

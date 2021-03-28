@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument("distribution",
                         help='name of the distribution to plot',
                         choices=['normal', 'Cauchy', 'uniform'])
+    parser.add_argument('bins', type=int, default=None)
     return parser.parse_args()
 
 
@@ -88,7 +89,10 @@ dist_dict = {
 }
 
 ## Calculating histogram values of the measured data
-bins = int(np.sqrt(len(sample)))
+if args.bins is None:
+	bins = int(np.sqrt(len(sample)))
+else:
+	bins = int(args.bins)
 bin_width = (max(sample)-min(sample))/bins
 xn, yn, _ = pyplot.hist(sample, bins=bins, density=True, alpha=0)
 xh, yh, _ = pyplot.hist(sample, bins=bins, density=False,  alpha=0.7,
@@ -98,9 +102,9 @@ xh, yh, _ = pyplot.hist(sample, bins=bins, density=False,  alpha=0.7,
 x, y = dist_dict[args.distribution](sample)
 scale = xh[0]/xn[0]
 
-pyplot.plot(x, y*scale, 'b--', label=args.distribution + ' distribution')
-pyplot.xlabel('Bins')
-pyplot.ylabel('Number of values within the range of bin')
+pyplot.plot(x, y*scale, 'b--', label='распределение ' + args.distribution)
+pyplot.xlabel('Интервалы')
+pyplot.ylabel('Число значений, входящих в интервал')
 pyplot.xlim(min(sample), max(sample))
 pyplot.ylim(0, max(xh)*1.05)
 pyplot.grid(True)
