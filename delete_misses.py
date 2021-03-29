@@ -132,7 +132,7 @@ if __name__ == '__main__':
 		print('#############################################')
 		print('normalize data:')
 		suffix = '.norm'
-		os.system(f'python data_normalization.py --file_name {new_file_name} --suffix {suffix} --bins{hist_bins}')
+		os.system(f'python data_normalization.py --file_name {new_file_name} --suffix {suffix} --bins {hist_bins}')
 		print('done')
 		
 	k = ((data - data.mean())**4).sum() / (data.shape[-1] * data.std()**4)
