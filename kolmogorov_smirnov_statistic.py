@@ -1,5 +1,7 @@
 import argparse
 import scipy.stats as stats
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 ## Creating command line arguments pasrer,
@@ -36,10 +38,24 @@ else:
     print("Error: provided an empty input file")
     quit()
 
+plt.plot(fsample, 'r*--', label='Ф-ия распределения х1')
+plt.plot(ssample, 'g*--', label='Ф-ия распределения х2')
+plt.grid(True)
+plt.xlabel('Интервалы')
+plt.ylabel('Ф-ия распределения')
+plt.legend(loc='right')
+plt.legend(loc='right')
+
+plt.show()
 
 ## statistic : Kolmogorov-Smirnov statistic quantifies a distance between
 #  the empirical distribution functions of two samples
 #  pvalue : The hypothesis is rejected if P-value is less than
 #  or equal to the defined level of significance
-statistic, pvalue = stats.ks_2samp(fsample, ssample)
-print('Kolmogorov-Smirnov statistic : ', statistic, pvalue)
+
+fsample = np.array(fsample)
+ssample = np.array(ssample)
+ks_val = np.abs(fsample - ssample).max()
+print(f'KS test value: {ks_val}')
+#statistic, pvalue = stats.ks_2samp(fsample, ssample)
+#print('Kolmogorov-Smirnov statistic : ', statistic, pvalue)
